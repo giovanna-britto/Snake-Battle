@@ -36,12 +36,8 @@ export class SolanaService {
     anchor.setProvider(this.provider);
 
     // 3. Carrega IDL de forma segura (Backend Style)
-    // Ajuste o caminho '../idl/...' conforme a estrutura de pastas do seu build (dist)
-    // Dica: Se rodando localmente sem build, pode ser necessário ajustar o path relative
     const idlAbsolutePath = path.resolve(process.cwd(), "src/idl/snake_betting.json");
     
-    // Fallback caso o path acima não funcione (depende de onde você roda 'npm start')
-    // Tente localizar onde o arquivo idl está realmente
     if (!fs.existsSync(idlAbsolutePath)) {
          console.error(`[SolanaService] IDL não encontrado em: ${idlAbsolutePath}`);
          // Tente um caminho relativo ao arquivo atual se necessário, ou mova o IDL para assets
@@ -51,10 +47,8 @@ export class SolanaService {
     const idl = JSON.parse(idlRaw);
 
     // 4. Inicializa o Programa
-    // Passamos o programId explicitamente caso o IDL seja genérico
     this.programId = new PublicKey(programIdStr);
     
-    // Sobrescrevemos o address no metadata do IDL para garantir consistência
     if (!idl.metadata) { idl.metadata = {}; }
     idl.metadata.address = this.programId.toBase58();
 
