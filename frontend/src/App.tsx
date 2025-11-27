@@ -1,77 +1,34 @@
-// src/App.tsx
-import { useState } from "react";
-import { MatchInfo } from "./components/MatchInfo";
-import { CreateMatchForm } from "./components/CreateMatchForm";
-import { MatchActions } from "./components/MatchActions";
+import { Toaster } from "@/components/ui/toaster";
+import { Toaster as Sonner } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { WalletContextProvider } from "@/contexts/WalletContext";
+import { GameProvider } from "@/contexts/GameContext";
+import Index from "./pages/Index";
+import Play from "./pages/Play";
+import NotFound from "./pages/NotFound";
 
-function App() {
-  const [currentMatchPda, setCurrentMatchPda] = useState<string>("");
+const queryClient = new QueryClient();
 
-  return (
-    <div
-      style={{
-        minHeight: "100vh",
-        background: "#050816",
-        color: "#f9fafb",
-        fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
-      }}
-    >
-      <header
-        style={{
-          borderBottom: "1px solid rgba(148, 163, 184, 0.4)",
-          padding: "1rem 2rem",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          gap: "1rem",
-        }}
-      >
-        <div>
-          <h1 style={{ fontSize: "1.25rem", fontWeight: 600 }}>
-            🐍 Snake Betting Protocol
-          </h1>
-          <p style={{ fontSize: "0.875rem", color: "#9ca3af" }}>
-            Crie partidas, gerencie apostas e resolva resultados na Solana Devnet.
-          </p>
-        </div>
-        <MatchInfo />
-      </header>
-
-      <main
-        style={{
-          padding: "1.5rem",
-          maxWidth: "1100px",
-          margin: "0 auto",
-          display: "grid",
-          gridTemplateColumns: "minmax(0, 1.2fr) minmax(0, 1fr)",
-          gap: "1.5rem",
-        }}
-      >
-        <section>
-          <CreateMatchForm onMatchCreated={setCurrentMatchPda} />
-        </section>
-
-        <section>
-          <MatchActions
-            currentMatchPda={currentMatchPda}
-            onMatchPdaChange={setCurrentMatchPda}
-          />
-        </section>
-      </main>
-
-      <footer
-        style={{
-          padding: "1rem 2rem",
-          borderTop: "1px solid rgba(148, 163, 184, 0.3)",
-          fontSize: "0.75rem",
-          color: "#6b7280",
-          textAlign: "center",
-        }}
-      >
-        Devnet · Backend: NestJS + Anchor · Frontend: React + Vite
-      </footer>
-    </div>
-  );
-}
+const App = () => (
+  <QueryClientProvider client={queryClient}>
+    <WalletContextProvider>
+      <GameProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/play" element={<Play />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </TooltipProvider>
+      </GameProvider>
+    </WalletContextProvider>
+  </QueryClientProvider>
+);
 
 export default App;
